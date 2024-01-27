@@ -207,12 +207,9 @@ class SlicedDataGenerator(tf.keras.utils.Sequence):
         outputs = np.zeros([self.batch_size, *self.output_size])
         
         for i in range(0, self.number_of_images):
-            
             # print("index:", index)
             # print("len(batch_data):", len(batch_data))
             # print("i:", i)
-
-            
             input_img_path, output_path = batch_data[i]
             _input = cv2.imread(os.path.join(self.dir_path, "Images", input_img_path))
             _input =  preprocess.apply_cutomized_preprocess(_input)
