@@ -132,32 +132,35 @@ def combine_preproc_with_output(preproc, output):
 
 
 def combine_label_with_output(label, output):
-    # Resize the output to match the label size (assuming label and output have the same size)
+    # # Resize the output to match the label size (assuming label and output have the same size)
+    # output_resized = cv2.resize(output, (label.shape[1], label.shape[0]))
+    
+    # # Create a mask for white regions in the label
+    # mask_label_white = (label == 255).astype(np.uint8)
+
+    # # Create a mask for white regions in the output
+    # mask_output_white = (output_resized == 255).astype(np.uint8)
+
+    # # Create a mask for common white regions in both label and output
+    # mask_common_white = np.minimum(mask_label_white, mask_output_white)
+    
+    # combined = np.zeros_like(label)
+    
+    # # Set white for common white regions in both label and output
+    # combined[mask_common_white == 1] = 255
+
+    # # Set green for white regions in label
+    # combined[mask_label_white == 1] = 50  # Green (BGR)
+
+    # # Set blue for white regions in output
+    # combined[mask_output_white == 1] = 200  # Blue (BGR)
+    # combined_rgb = cv2.cvtColor(combined, cv2.COLOR_BGR2RGB)
+    
+    # return combined_rgb
     output_resized = cv2.resize(output, (label.shape[1], label.shape[0]))
     
-    # Create a mask for white regions in the label
-    mask_label_white = (label == 255).astype(np.uint8)
-
-    # Create a mask for white regions in the output
-    mask_output_white = (output_resized == 255).astype(np.uint8)
-
-    # Create a mask for common white regions in both label and output
-    mask_common_white = np.minimum(mask_label_white, mask_output_white)
+    return output_resized
     
-    combined = np.zeros_like(label)
-    
-    # Set white for common white regions in both label and output
-    combined[mask_common_white == 1] = 255
-
-    # Set green for white regions in label
-    combined[mask_label_white == 1] = 50  # Green (BGR)
-
-    # Set blue for white regions in output
-    combined[mask_output_white == 1] = 200  # Blue (BGR)
-    combined_rgb = cv2.cvtColor(combined, cv2.COLOR_BGR2RGB)
-
-    return combined_rgb
-
 
     
 def visualize_FG_result(model,
@@ -247,7 +250,8 @@ def plot_result_images_ver2(file_name, org, prepoc, label, result):
         
     # Output Image
     plt.subplot(2, 4, 4)
-    plt.imshow(result, cmap='gray')
+    output_resized = cv2.resize(result, (label.shape[1], label.shape[0]))
+    plt.imshow(output_resized, cmap='gray')
     plt.title('Model Output')
     
     # Combination Original Image
@@ -265,7 +269,7 @@ def plot_result_images_ver2(file_name, org, prepoc, label, result):
     # Combination Label Image
     plt.subplot(2, 4, 7)
     combined_label = combine_label_with_output(label, result)
-    plt.imshow(combined_label)
+    plt.imshow(combined_label, cmap='gray')
     plt.title('Combination Label Image')
 
     plt.show()
