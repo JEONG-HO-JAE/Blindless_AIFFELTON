@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-from albumentations import HorizontalFlip, VerticalFlip, Compose, Resize
+from albumentations import HorizontalFlip, VerticalFlip, Compose, Resize, RandomCrop
 
 CLIPLIMIT = 3.0
 GRIDSIZE = (8, 8)
@@ -83,6 +83,34 @@ def resize_and_extract_patches(image, label, size, target_size):
     
     label_patches = tf.image.extract_patches(
         images=tf.expand_dims(resized_label, 0),
+        sizes=[1, size, size, 1],
+        strides=[1, size, size, 1],
+        rates=[1, 1, 1, 1],
+        padding="VALID",
+    )
+    # print(image_patches.shape)
+    # print(label_patches.shape)
+    # 4D 텐서를 3D로 변환
+    image_patches = tf.reshape(image_patches, (-1, size, size, 1))
+    label_patches = tf.reshape(label_patches, (-1, size, size, 1))
+    # print(image_patches.shape)
+    # print(label_patches.shape)
+    return image_patches, label_patches
+
+def extract_patches(image, label, size):
+    image = tf.expand_dims(image, axis=-1)
+    label = tf.expand_dims(label, axis=-1)
+    
+    image_patches = tf.image.extract_patches(
+        images=tf.expand_dims(image, 0),
+        sizes=[1, size, size, 1],
+        strides=[1, size, size, 1],
+        rates=[1, 1, 1, 1],
+        padding="VALID",
+    )
+    
+    label_patches = tf.image.extract_patches(
+        images=tf.expand_dims(label, 0),
         sizes=[1, size, size, 1],
         strides=[1, size, size, 1],
         rates=[1, 1, 1, 1],

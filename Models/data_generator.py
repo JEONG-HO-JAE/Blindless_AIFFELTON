@@ -232,3 +232,78 @@ class SlicedDataGenerator(tf.keras.utils.Sequence):
                 outputs[k] = augmented["mask"][start_row:end_row, start_col:end_col].reshape((self.img_size[0], self.img_size[0], 1))
         # print(len(inputs), len(outputs))
         return inputs, outputs
+    
+    class RandomlyCropGeneraor(tf.keras.utils.Sequence):
+        def __init__(self, dir_path, number_of_images = 2,
+                     input_size=(128, 128, 1),
+                     is_train=True, augmentation=None):
+            self.dir_path = dir_path
+            self.number_of_images = number_of_images
+            self.input_size = input_size
+            self.batch_size =  2^21 // input_size[0] // input_size[0]
+            self.is_train = is_train
+            self.augmentation = augmentation
+            self.data = self.load_dataset()
+        
+        def load_dataset(self):
+            input_path_list = []
+            label_path_list = []
+
+            for folder in os.listdir(self.dir_path):
+                if "Images" in folder:
+                    for file in os.listdir(os.path.join(self.dir_path, folder)):
+                        input_path_list.append(file)
+                else:
+                    for file in os.listdir(os.path.join(self.dir_path, folder)):
+                        label_path_list.append(file)
+
+            input_path_list.sort()
+            label_path_list.sort()
+            assert len(input_path_list) == len(label_path_list)
+            data = [_ for _ in zip(input_path_list, label_path_list)] 
+            random.shuffle(data)
+            
+            if self.is_train:
+                return data[:-500]
+            else:
+                return data[-500:]
+        
+        def __len__(self):
+            return math.ceil(len(self.data) / (self.number_of_images))
+
+        def __getitem__(self, index):
+            batch_data = self.data[
+                index * (self.number_of_images):
+                (index + 1) * (self.number_of_images)
+            ]
+
+            image_patches = []
+            label_patches = []
+            
+            for image_path, label_path in batch_data:
+                image = cv2.imread(image_path)
+                image = preprocess.apply_cutomized_preprocess(image)
+                _label = cv2.imread(label_path, cv2.IMREAD_GRAYSCALE)
+                label = ((_label == 255).astype(np.uint8) * 1)
+                
+                # 이미지 크기에 따라 조절 및 패치 추출
+                patches_image, patches_label = preprocess.extract_patches(image, label, self.input_size[0])
+                
+                image_patches.extend(patches_image)
+                label_patches.extend(patches_label)
+                
+            indices = random.sample(range(len(image_patches)), self.batch_size)
+            selected_image_patches = [image_patches[i] for i in indices]
+            selected_label_patches = [label_patches[i] for i in indices]
+                
+            # Convert TensorFlow tensors to numpy arrays
+            selected_image_patches = np.array(selected_image_patches)
+            selected_label_patches = np.array(selected_label_patches)
+    
+            augmented_data = {"image": selected_image_patches,
+                            "mask": selected_label_patches}     
+            augmented_data = self.augmentation(**augmented_data)
+            
+            input_patches, label_patches = augmented_data['image'], augmented_data['mask']
+                
+            return input_patches, label_patches

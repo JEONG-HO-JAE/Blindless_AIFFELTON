@@ -21,7 +21,7 @@ class SaveModelEveryEpoch(Callback):
         self.first_epoch = first_epoch
 
     def on_epoch_end(self, epoch, logs=None):
-        file_name = "{}--{:.4f}-{:.4f}-{:.4f}-{:.4f}-{:.4f}.h5".format(self.first_epoch + epoch, logs['loss'], logs['sensitivity'],logs['specificity'],
+        file_name = "{}--{:.4f}-{:.4f}-{:.4f}-{:.4f}-{:.4f}.pb".format(self.first_epoch + epoch, logs['loss'], logs['sensitivity'],logs['specificity'],
                                                                 logs['val_sensitivity'], logs['val_specificity'])
         model_save_path = os.path.join(self.save_path, file_name)
 
