@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-from albumentations import HorizontalFlip, VerticalFlip, Compose, Resize, RandomCrop
+from albumentations import HorizontalFlip, VerticalFlip, Compose, Resize
 
 CLIPLIMIT = 3.0
 GRIDSIZE = (8, 8)
@@ -26,7 +26,6 @@ def apply_normalization(g):
 
 def apply_cutomized_preprocess(image):
     r, g, b = cv2.split(image)
-    
     bound = 100
     bound_pixel_count = (r >= bound).sum()
     if bound_pixel_count >= 0.5 * (r.shape[0] * r.shape[1]):

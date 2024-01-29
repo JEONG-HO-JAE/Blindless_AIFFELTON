@@ -6,6 +6,9 @@ class DiceLoss(tf.keras.losses.Loss):
         self.not_sigmoid = not_sigmoid
 
     def dice_coefficient(self, y_true, y_pred):
+        y_true = tf.cast(y_true, dtype=tf.float32)
+        y_pred = tf.cast(y_pred, dtype=tf.float32)
+        
         numerator = 2 * tf.reduce_sum(y_true * y_pred)
         denominator = tf.reduce_sum(tf.square(y_true)) + tf.reduce_sum(tf.square(y_pred))
         dice_coeff = numerator / (denominator + tf.keras.backend.epsilon())  # Adding epsilon for numerical stability
