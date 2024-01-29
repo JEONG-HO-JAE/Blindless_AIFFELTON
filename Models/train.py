@@ -69,7 +69,7 @@ def model_train(model, epoch,
                                                  weight_decay=weight_decay,
                                                  verbose=1)
     
-    save_model_callback = SaveModelEveryEpoch(model_path, epoch)
+    save_model_callback = SaveModelEveryEpoch(model_path, 1)
     
     callbacks_list = []
     if save_every_epoch:
