@@ -157,12 +157,12 @@ def combine_label_with_output(label, output):
     # combined_rgb = cv2.cvtColor(combined, cv2.COLOR_BGR2RGB)
     
     # return combined_rgb
+    
     output_resized = cv2.resize(output, (label.shape[1], label.shape[0]))
     
     return output_resized
     
 
-    
 def visualize_FG_result(model,
                         num_images_to_select, SOURCE,
                         img_size, preproc):
