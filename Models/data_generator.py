@@ -9,13 +9,14 @@ import preprocess
 class AdaptiveDataGenerator(tf.keras.utils.Sequence):
     def __init__(self, dir_path, number_of_images = 4,
                  img_size=(256, 256, 1), output_size=(256, 256, 1),
-                 is_train=True, augmentation=None):
+                 is_train=True, is_test=False, augmentation=None):
         self.number_of_images = number_of_images
         self.dir_path = dir_path
         self.batch_size = number_of_images * (512//img_size[0]) * (512//img_size[0])
         self.img_size = img_size
         self.output_size = output_size
         self.is_train = is_train
+        self.is_test = is_test
         self.augmentation = augmentation
         self.data = self.load_dataset()
   
@@ -37,6 +38,9 @@ class AdaptiveDataGenerator(tf.keras.utils.Sequence):
         
         data = [_ for _ in zip(input_path_list, label_path_list)] 
         random.shuffle(data)
+        
+        if self.is_test:
+            return data
         
         if self.is_train:
             return data[:-500]
@@ -94,12 +98,13 @@ class AdaptiveDataGenerator(tf.keras.utils.Sequence):
 class FullSizedDataGenerator(tf.keras.utils.Sequence):
     def __init__(self, dir_path, batch_size=4,
                  img_size=(512, 512, 1), output_size=(512, 512, 1),
-                 is_train=True, augmentation=None):
+                 is_train=True, is_test=False, augmentation=None):
         self.dir_path = dir_path
         self.batch_size = batch_size
         self.img_size = img_size
         self.output_size = output_size
         self.is_train = is_train
+        self.is_test = is_test
         self.augmentation = augmentation
         self.data = self.load_dataset()
 
@@ -121,6 +126,9 @@ class FullSizedDataGenerator(tf.keras.utils.Sequence):
         data = [_ for _ in zip(input_path_list, label_path_list)]
 
         random.shuffle(data)
+        
+        if self.is_test:
+            return data
         
         if self.is_train:
             return data[:-500]
@@ -159,7 +167,7 @@ class FullSizedDataGenerator(tf.keras.utils.Sequence):
 class SlicedDataGenerator(tf.keras.utils.Sequence):
     def __init__(self, dir_path, number_of_images = 2,
                  img_size=(512, 512, 1), output_size=(512, 512, 1), resize_shape = (1024, 1024, 1),
-                 is_train=True, augmentation=None):
+                 is_train=True, is_test=False, augmentation=None):
         self.dir_path = dir_path
         self.resize_shape = resize_shape
         self.number_of_images = number_of_images
@@ -167,6 +175,7 @@ class SlicedDataGenerator(tf.keras.utils.Sequence):
         self.img_size = img_size
         self.output_size = output_size
         self.is_train = is_train
+        self.is_test = is_test
         self.augmentation = augmentation
         self.data = self.load_dataset()
 
@@ -187,6 +196,9 @@ class SlicedDataGenerator(tf.keras.utils.Sequence):
         assert len(input_path_list) == len(label_path_list)
         data = [_ for _ in zip(input_path_list, label_path_list)] 
         random.shuffle(data)
+        
+        if self.is_test:
+            return data
         
         if self.is_train:
             return data[:-500]
@@ -236,12 +248,13 @@ class SlicedDataGenerator(tf.keras.utils.Sequence):
 class RandomlyCropGeneraor(tf.keras.utils.Sequence):
     def __init__(self, dir_path, number_of_images = 2,
                  input_size=(128, 128, 1),
-                 is_train=True, augmentation=None):
+                 is_train=True, is_test=False, augmentation=None):
         self.dir_path = dir_path
         self.number_of_images = number_of_images
         self.input_size = input_size
         self.batch_size =  2^21 // input_size[0] // input_size[0]
         self.is_train = is_train
+        self.is_test = is_test
         self.augmentation = augmentation
         self.data = self.load_dataset()
         
@@ -263,7 +276,10 @@ class RandomlyCropGeneraor(tf.keras.utils.Sequence):
             
         data = [_ for _ in zip(input_path_list, label_path_list)] 
         random.shuffle(data)
-            
+        
+        if self.is_test:
+            return data
+        
         if self.is_train:
             return data[:-500]
         else:
