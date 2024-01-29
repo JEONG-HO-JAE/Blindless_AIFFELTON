@@ -130,35 +130,35 @@ def combine_preproc_with_output(preproc, output):
 
 
 def combine_label_with_output(label, output):
-    # # Resize the output to match the label size (assuming label and output have the same size)
-    # output_resized = cv2.resize(output, (label.shape[1], label.shape[0]))
+    # Initialize a new image with zeros
     
-    # # Create a mask for white regions in the label
-    # mask_label_white = (label == 255).astype(np.uint8)
+    output = cv2.resize(output, (label.shape[1], label.shape[0]))
+    result_img = np.zeros_like(label)
 
-    # # Create a mask for white regions in the output
-    # mask_output_white = (output_resized == 255).astype(np.uint8)
+    # Condition 1: label and output are both non-zero
+    condition1 = (label != 0) & (output != 0)
+    result_img[condition1] = 255
 
-    # # Create a mask for common white regions in both label and output
-    # mask_common_white = np.minimum(mask_label_white, mask_output_white)
-    
-    # combined = np.zeros_like(label)
-    
-    # # Set white for common white regions in both label and output
-    # combined[mask_common_white == 1] = 255
+    # Condition 2: label is zero, output is non-zero
+    condition2 = (label == 0) & (output != 0)
+    result_img[condition2] = 100
 
-    # # Set green for white regions in label
-    # combined[mask_label_white == 1] = 50  # Green (BGR)
+    # Condition 3: label is non-zero, output is zero
+    condition3 = (label != 0) & (output == 0)
+    result_img[condition3] = 200
 
-    # # Set blue for white regions in output
-    # combined[mask_output_white == 1] = 200  # Blue (BGR)
-    # combined_rgb = cv2.cvtColor(combined, cv2.COLOR_BGR2RGB)
+    # Create a blank RGB image
+    colored_image = np.zeros((result_img.shape[0], result_img.shape[1], 3), dtype=np.uint8)
+
+    # Set colors based on pixel values
+    colored_image[result_img == 0] = [0, 0, 0]       # Black
+    colored_image[result_img == 100] = [255, 0, 0]    # Red
+    colored_image[result_img == 200] = [0, 255, 0]    # Green
+    colored_image[result_img == 255] = [255, 255, 255] # White
+
+    return colored_image
+
     
-    # return combined_rgb
-    
-    output_resized = cv2.resize(output, (label.shape[1], label.shape[0]))
-    
-    return output_resized
     
 
 def visualize_FG_result(model,
@@ -183,6 +183,7 @@ def visualize_SG_result(model,
     for file_name, org_img, preproc_img ,label_img, output_img in data:
         plot_result_images_ver2(file_name, org_img, preproc_img ,label_img, output_img)
 
+
 def FG_result(model, num_images_to_select, SOURCE, img_size, preproc):
     input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select)
     files = []
@@ -200,7 +201,7 @@ def FG_result(model, num_images_to_select, SOURCE, img_size, preproc):
         preproc_imgs.append(preproc_img)
         output_imgs.append(output_img)
         
-    data = [_ for _ in zip(files, org_imgs, label_imgs, preproc_imgs, output_imgs)]
+    data = [_ for _ in zip(files, org_imgs, preproc_imgs, label_imgs, output_imgs)]
     
     return data
 
@@ -221,7 +222,7 @@ def AG_result(model, num_images_to_select, SOURCE, img_size):
         preproc_imgs.append(preproc_img)
         output_imgs.append(output_img)
         
-    data = [_ for _ in zip(files, org_imgs, label_imgs, preproc_imgs, output_imgs)]
+    data = [_ for _ in zip(files, org_imgs, preproc_imgs, label_imgs, output_imgs)]
     
     return data
     
@@ -242,7 +243,7 @@ def SG_result(model, num_images_to_select, SOURCE, img_size, resize_shape, prepr
         preproc_imgs.append(preproc_img)
         output_imgs.append(output_img)
         
-    data = [_ for _ in zip(files, org_imgs, label_imgs, preproc_imgs, output_imgs)]
+    data = [_ for _ in zip(files, org_imgs, preproc_imgs, label_imgs, output_imgs)]
     
     return data
     
@@ -380,7 +381,7 @@ def plot_result_images_ver2(file_name, org, prepoc, label, result):
         
     # Label Image
     plt.subplot(2, 4, 3)
-    plt.imshow(cv2.cvtColor(label, cv2.COLOR_BGR2RGB))
+    plt.imshow(label,cmap='gray')
     plt.title('Label Image')
         
     # Output Image
