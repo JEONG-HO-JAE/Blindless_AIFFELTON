@@ -4,11 +4,15 @@ import preprocess
 import numpy as np
 import matplotlib.pyplot as plt
 
-def retrieve_path_list(SOURCE, num_images_to_select):
+def retrieve_path_list(SOURCE, num_images_to_select, is_test=False):
     input_path_list = []
     label_path_list = []
-
-    file_list = random.sample(os.listdir(os.path.join(SOURCE, "Images")), num_images_to_select)
+    if is_test:
+        random.seed(10)
+        file_list = random.sample(os.listdir(os.path.join(SOURCE, "Images")), num_images_to_select)
+    else:
+        file_list = random.sample(os.listdir(os.path.join(SOURCE, "Images")), num_images_to_select)
+    
     for file in file_list:
         for label_file in os.listdir(os.path.join(SOURCE, "Labels")):
             if label_file[:-3] == file[:-3]:
@@ -157,8 +161,6 @@ def combine_label_with_output(label, output):
     colored_image[result_img == 255] = [255, 255, 255] # White
 
     return colored_image
-
-    
     
 
 def visualize_FG_result(model,
@@ -226,14 +228,21 @@ def AG_result(model, num_images_to_select, SOURCE, img_size):
     
     return data
     
-def SG_result(model, num_images_to_select, SOURCE, img_size, resize_shape, preproc):
-    input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select)
+def SG_result(model, num_images_to_select, SOURCE, img_size, resize_shape, preproc, is_test=False):
     files = []
     org_imgs = []
     label_imgs = []
     preproc_imgs = []
     output_imgs = []
-    
+        
+    if is_test:
+        if num_images_to_select >= 308:
+            return print("---")
+        input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select, is_test=True)
+        
+    else:
+        input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select)
+        
     for i in range(0, num_images_to_select):
         files.append(os.path.basename(input_path_list[i]))
         org_img = cv2.imread(input_path_list[i])
@@ -242,43 +251,38 @@ def SG_result(model, num_images_to_select, SOURCE, img_size, resize_shape, prepr
         preproc_img, output_img = retrieve_SG_model_result(model, org_img, img_size, resize_shape, preproc)
         preproc_imgs.append(preproc_img)
         output_imgs.append(output_img)
-        
+            
     data = [_ for _ in zip(files, org_imgs, preproc_imgs, label_imgs, output_imgs)]
-    
+        
     return data
     
 def compare_model_result(data_1, data_2, num_images_to_select):
-    # Sort data based on filenames
-    data_1_sorted = sorted(data_1, key=lambda x: x[0])
-    data_2_sorted = sorted(data_2, key=lambda x: x[0])
-    plot_models_result(data_1_sorted, data_2_sorted, num_images_to_select)
+    plot_models_result(data_1, data_2, num_images_to_select)
     
 
 def plot_models_result(data_1_sorted, data_2_sorted, num_images_to_select):
     for i in range(0, num_images_to_select):
         file_name = data_1_sorted[i][0]
         org_img = data_1_sorted[i][1]
-        preproc_img = cv2.resize(data_1_sorted[i][3], (org_img.shape[1], org_img.shape[0]))
-        label_img = cv2.resize(data_1_sorted[i][2], (org_img.shape[1], org_img.shape[0]))
+        preproc_img = cv2.resize(data_1_sorted[i][2], (org_img.shape[1], org_img.shape[0]))
+        label_img = cv2.resize(data_1_sorted[i][3], (org_img.shape[1], org_img.shape[0]))
         
         output_img_1 = data_1_sorted[i][4]
-        output_img_2 = data_1_sorted[i][4]
+        output_img_2 = data_2_sorted[i][4]
         
-        label_img_1 = data_1_sorted[i][2]
+        label_img_1 = data_1_sorted[i][3]
         comb_img_1 = combine_image_with_output(org_img, output_img_1)
-        label_img_2 = data_2_sorted[i][2]
+        label_img_2 = data_2_sorted[i][3]
         comb_img_2 = combine_image_with_output(org_img, output_img_2)
         
-        pre_proc_1 = data_1_sorted[i][3]
-        comb_pre_1 = combine_preproc_with_output(pre_proc_1, output_img_1)
-        pre_proc_2 = data_2_sorted[i][3]
-        comb_pre_2 = combine_preproc_with_output(pre_proc_2, output_img_2)
+        comb_pre_1 = combine_preproc_with_output(preproc_img, output_img_1)
+        comb_pre_2 = combine_preproc_with_output(preproc_img, output_img_2)
         
         comb_label_1 = combine_label_with_output(label_img_1, output_img_1)
         comb_label_2 = combine_label_with_output(label_img_2, output_img_2)
 
         
-        plt.figure(figsize=(12, 4))
+        plt.figure(figsize=(20, 20))
         
         # Original Image
         plt.subplot(3, 4, 1)
@@ -286,13 +290,13 @@ def plot_models_result(data_1_sorted, data_2_sorted, num_images_to_select):
         plt.title(file_name)
         
         #Preprocessed Image
-        plt.subplot(1, 4, 2)
+        plt.subplot(3, 4, 2)
         plt.imshow(preproc_img, cmap='gray')
         plt.title('Preprocessed Image')
         
         # Label Image
-        plt.subplot(2, 4, 3)
-        plt.imshow(cv2.cvtColor(label_img, cv2.COLOR_BGR2RGB))
+        plt.subplot(3, 4, 3)
+        plt.imshow(label_img,  cmap='gray')
         plt.title('Label Image')
         
         # Combination Original Image

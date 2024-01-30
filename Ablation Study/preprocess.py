@@ -1,4 +1,5 @@
 import cv2
+import os
 import numpy as np
 import tensorflow as tf
 from albumentations import HorizontalFlip, VerticalFlip, Compose, Resize
@@ -15,7 +16,6 @@ def red2green(r,g,b):
   tmp = r.copy()
   r = g.copy()
   g = tmp
-
   return r,g,b
 
 def apply_normalization(g):
@@ -37,6 +37,44 @@ def apply_cutomized_preprocess(image):
     output_channel = apply_clahe(output_channel)
     output_channel = apply_normalization(output_channel)
     return output_channel
+
+def crop_black_part(image_path, image, label):
+    file_name = os.path.basename(image_path)
+    if "AFIO" in file_name:
+        crop_img = image[10:1450, 150:1280]
+        crop_label = label[10:1450, 150:1280]
+    elif "DR_HAGIS" in file_name:
+        if image.shape[0]==1944: # (1944, 2896, 3)
+            crop_img = image[0:2100, 500:2380]
+            crop_label = label[0:2100, 500:2380]
+        elif image.shape[0]==2136: # (2136, 3216, 3)
+            crop_img = image[0:2136, 450:2650]
+            crop_label = label[0:2136, 450:2650]
+        elif image.shape[0]==2304: # (2304, 3456, 3)
+            crop_img = image[0:2304, 200:3256]
+            crop_label = label[0:2304, 200:3256]
+        elif image.shape[0]==1880: # (1880, 2816, 3)
+            crop_img = image[0:1880, 200:2530]
+            crop_label = label[0:1880, 200:2530]
+        else: # (3168, 4752, 3)
+            crop_img = image[0:3168, 800:3900]
+            crop_label = label[0:3168,800:3900]
+    elif "LES" in file_name:
+        if image.shape[0]==1444: # (1444, 1620, 3)
+            crop_img = image[0:1444, 60:1530]
+            crop_label = label[0:1444, 60:1530]
+    elif "STARE" in file_name:
+        if image.shape[0]==605: # (605, 700, 3)
+            crop_img = image[0:605, 20:680]
+            crop_label = label[0:605, 20:680]
+    elif "TREND" in file_name:
+        if image.shape[0]==1920:
+            crop_img = image[0:1920, 150:2400]
+            crop_label = label[0:1920, 150:2400]
+    else: 
+        crop_img = image
+        crop_label = label       
+    return crop_img, crop_label
 
 def build_augmentation_for_general(width=512, height=512, is_train=True):
     if is_train:
