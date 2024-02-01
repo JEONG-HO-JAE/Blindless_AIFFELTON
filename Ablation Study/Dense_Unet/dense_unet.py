@@ -17,7 +17,7 @@ def dense_block(input_tensor, nb_filter):
     add2 = concatenate([input_tensor, x2], axis=-1)
     return add2
 
-def build_model(input_shape=(64, 64, 1)):
+def build_model(input_shape):
     inputs = Input(input_shape)
     # Contracting Path
     conv1 = Conv2D(48, 3, activation='relu', padding='same', kernel_initializer='he_normal')(inputs)
