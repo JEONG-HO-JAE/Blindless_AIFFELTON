@@ -265,10 +265,12 @@ def SG_result(model, num_images_to_select, SOURCE, img_size, resize_shape, prepr
     return data
     
 def compare_model_result(data_1, data_2, num_images_to_select):
-    plot_models_result(data_1, data_2, num_images_to_select)
+    plot_2models_result(data_1, data_2, num_images_to_select)
     
+def compare_3models_result (data_1, data_2, data_3, num_images_to_select):
+    plot_3models_result(data_1, data_2, data_3, num_images_to_select)
 
-def plot_models_result(data_1_sorted, data_2_sorted, num_images_to_select):
+def plot_2models_result(data_1_sorted, data_2_sorted, num_images_to_select):
     for i in range(0, num_images_to_select):
         file_name = data_1_sorted[i][0]
         org_img = data_1_sorted[i][1]
@@ -349,6 +351,112 @@ def plot_models_result(data_1_sorted, data_2_sorted, num_images_to_select):
 
         plt.show()
         
+def plot_3models_result(data_1_sorted, data_2_sorted, data_3_sorted, num_images_to_select):
+    for i in range(0, num_images_to_select):
+        file_name = data_1_sorted[i][0]
+        org_img = data_1_sorted[i][1]
+        preproc_img = cv2.resize(data_1_sorted[i][2], (org_img.shape[1], org_img.shape[0]))
+        label_img = cv2.resize(data_1_sorted[i][3], (org_img.shape[1], org_img.shape[0]))
+        
+        output_img = []
+        output_img.append(data_1_sorted[i][4])
+        output_img.append(data_2_sorted[i][4])
+        output_img.append(data_3_sorted[i][4])
+        
+        comb_img = []
+        label_img_1 = data_1_sorted[i][3]
+        comb_img.append(combine_image_with_output(org_img, output_img[0]))
+        label_img_2 = data_2_sorted[i][3]
+        comb_img.append(combine_image_with_output(org_img, output_img[1]))
+        label_img_3 = data_3_sorted[i][3]
+        comb_img.append(combine_image_with_output(org_img, output_img[2]))
+        
+        comb_pre = []
+        comb_pre.append(combine_preproc_with_output(preproc_img, output_img[0]))
+        comb_pre.append(combine_preproc_with_output(preproc_img, output_img[1]))
+        comb_pre.append(combine_preproc_with_output(preproc_img, output_img[2]))
+        
+        comb_label = []
+        comb_label.append(combine_label_with_output(label_img_1, output_img[0]))
+        comb_label.append(combine_label_with_output(label_img_2, output_img[1]))
+        comb_label.append(combine_label_with_output(label_img_3, output_img[2]))
+        
+        plt.figure(figsize=(20, 20))
+        
+        # Original Image
+        plt.subplot(4, 4, 1)
+        plt.imshow(cv2.cvtColor(org_img, cv2.COLOR_BGR2RGB))
+        plt.title(file_name)
+                
+        #Preprocessed Image
+        plt.subplot(4, 4, 2)
+        plt.imshow(preproc_img, cmap='gray')
+        plt.title('Preprocessed Image')
+                
+        # Label Image
+        plt.subplot(4, 4, 3)
+        plt.imshow(label_img,  cmap='gray')
+        plt.title('Label Image')
+        
+        plt.subplot(4, 4, 5)
+        plt.imshow(cv2.cvtColor(comb_img[0], cv2.COLOR_BGR2RGB))
+        plt.title(file_name)
+                    
+        # Combination Preprocessed Image
+        plt.subplot(4, 4, 6)
+        plt.imshow(comb_pre[0], cmap='gray')
+        plt.title('Combination Preprocessed Image')
+                    
+        # Combination Label Image
+        plt.subplot(4, 4, 7)
+        plt.imshow(comb_label[0], cmap='gray')
+        plt.title('Combination Label Image')
+                
+        plt.subplot(4, 4, 8)
+        output_1_resized = cv2.resize(output_img[0], (label_img.shape[1], label_img.shape[0]))
+        plt.imshow(output_1_resized, cmap='gray')
+        plt.title('Model Output')
+        
+        plt.subplot(4, 4, 9)
+        plt.imshow(cv2.cvtColor(comb_img[1], cv2.COLOR_BGR2RGB))
+        plt.title(file_name)
+                    
+        # Combination Preprocessed Image
+        plt.subplot(4, 4, 10)
+        plt.imshow(comb_pre[1], cmap='gray')
+        plt.title('Combination Preprocessed Image')
+                    
+        # Combination Label Image
+        plt.subplot(4, 4, 11)
+        plt.imshow(comb_label[1], cmap='gray')
+        plt.title('Combination Label Image')
+                
+        plt.subplot(4, 4, 12)
+        output_1_resized = cv2.resize(output_img[1], (label_img.shape[1], label_img.shape[0]))
+        plt.imshow(output_1_resized, cmap='gray')
+        plt.title('Model Output')
+        
+        plt.subplot(4, 4, 13)
+        plt.imshow(cv2.cvtColor(comb_img[2], cv2.COLOR_BGR2RGB))
+        plt.title(file_name)
+                    
+        # Combination Preprocessed Image
+        plt.subplot(4, 4, 14)
+        plt.imshow(comb_pre[2], cmap='gray')
+        plt.title('Combination Preprocessed Image')
+                    
+        # Combination Label Image
+        plt.subplot(4, 4, 15)
+        plt.imshow(comb_label[2], cmap='gray')
+        plt.title('Combination Label Image')
+                
+        plt.subplot(4, 4, 16)
+        output_1_resized = cv2.resize(output_img[2], (label_img.shape[1], label_img.shape[0]))
+        plt.imshow(output_1_resized, cmap='gray')
+        plt.title('Model Output')
+        
+        
+        plt.show()    
         
     
 def plot_result_images_ver1(file_name, org, prepoc, label, result):
