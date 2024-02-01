@@ -302,13 +302,15 @@ class RandomlyCropGeneraor(tf.keras.utils.Sequence):
             image = preprocess.apply_cutomized_preprocess(image)
             _label = cv2.imread(label_path, cv2.IMREAD_GRAYSCALE)
             label = ((_label == 255).astype(np.uint8) * 1)
+            image, label = preprocess.crop_black_part(image_path, image, label)
                 
             # 이미지 크기에 따라 조절 및 패치 추출
             patches_image, patches_label = preprocess.extract_patches(image, label, self.input_size[0])
                 
             image_patches.extend(patches_image)
             label_patches.extend(patches_label)
-            
+        
+        # print(len(image_patches),self.batch_size)
         indices = random.sample(range(len(image_patches)), self.batch_size)
         selected_image_patches = [image_patches[i] for i in indices]
         selected_label_patches = [label_patches[i] for i in indices]
