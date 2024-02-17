@@ -38,6 +38,13 @@ def apply_cutomized_preprocess(image):
     output_channel = apply_normalization(output_channel)
     return output_channel
 
+def apply_cutomized_preprocess_2(image):
+    r, g, b = cv2.split(image)
+    
+    output_channel = apply_clahe(g)
+    output_channel = apply_normalization(output_channel)
+    return output_channel
+
 def crop_black_part(image_path, image, label):
     file_name = os.path.basename(image_path)
     if "AFIO" in file_name:
@@ -60,17 +67,20 @@ def crop_black_part(image_path, image, label):
             crop_img = image[0:3168, 800:3900]
             crop_label = label[0:3168,800:3900]
     elif "LES" in file_name:
-        if image.shape[0]==1444: # (1444, 1620, 3)
-            crop_img = image[0:1444, 60:1530]
-            crop_label = label[0:1444, 60:1530]
+        crop_img = image[0:1444, 60:1530]
+        crop_label = label[0:1444, 60:1530]
+    elif "ChaseDB" in file_name:
+        crop_img = image[0:960, 20:970]
+        crop_label = label[10:960, 20:970]
     elif "STARE" in file_name:
-        if image.shape[0]==605: # (605, 700, 3)
-            crop_img = image[0:605, 20:680]
-            crop_label = label[0:605, 20:680]
+        crop_img = image[0:605, 20:680]
+        crop_label = label[0:605, 20:680]
     elif "TREND" in file_name:
-        if image.shape[0]==1920:
-            crop_img = image[0:1920, 150:2400]
-            crop_label = label[0:1920, 150:2400]
+        crop_img = image[0:1920, 150:2400]
+        crop_label = label[0:1920, 150:2400]
+    elif "HRF" in file_name:
+        crop_img = image[0:2336, 90:3450]
+        crop_label = label[0:2336, 90:3450]
     else: 
         crop_img = image
         crop_label = label       

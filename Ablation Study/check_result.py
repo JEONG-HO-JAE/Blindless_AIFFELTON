@@ -4,12 +4,17 @@ import preprocess
 import numpy as np
 import matplotlib.pyplot as plt
 
-def retrieve_path_list(SOURCE, num_images_to_select, is_test=False):
+def retrieve_path_list(SOURCE, num_images_to_select, is_test=False, list=None):
     input_path_list = []
     label_path_list = []
+    file_list = []
     if is_test:
-        random.seed(10)
-        file_list = random.sample(os.listdir(os.path.join(SOURCE, "Images")), num_images_to_select)
+        if list is not None:
+            for file in list:
+                file_list.append(file)
+        else: 
+            random.seed(10)
+            file_list = random.sample(os.listdir(os.path.join(SOURCE, "Images")), num_images_to_select)
     else:
         file_list = random.sample(os.listdir(os.path.join(SOURCE, "Images")), num_images_to_select)
     
@@ -186,7 +191,7 @@ def visualize_SG_result(model,
         plot_result_images_ver2(file_name, org_img, preproc_img ,label_img, output_img)
 
 
-def FG_result(model, num_images_to_select, SOURCE, img_size, preproc, is_test=False):
+def FG_result(model, num_images_to_select, SOURCE, img_size, preproc, is_test=False, list=None):
     files = []
     org_imgs = []
     label_imgs = []
@@ -194,7 +199,9 @@ def FG_result(model, num_images_to_select, SOURCE, img_size, preproc, is_test=Fa
     output_imgs = []
     
     if is_test:
-        input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select, is_test=True)
+        input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select, is_test=True, list=None)
+    elif list is not None:
+        input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select, is_test=True, list=list)
     else:
         input_path_list, label_path_list = retrieve_path_list(SOURCE, num_images_to_select)
     
@@ -266,9 +273,16 @@ def SG_result(model, num_images_to_select, SOURCE, img_size, resize_shape, prepr
     
 def compare_model_result(data_1, data_2, num_images_to_select):
     plot_2models_result(data_1, data_2, num_images_to_select)
+
+# def compare_model_result_using_list(data_1, data_2, file_list):
+#     plot_2models_result_using_file_list(data_1, data_2, file_list)
     
 def compare_3models_result (data_1, data_2, data_3, num_images_to_select):
     plot_3models_result(data_1, data_2, data_3, num_images_to_select)
+    
+# def compare_3models_result_using_list(data_1, data_2, data_3, file_list):
+#     plot_3models_result_using_file_list(data_1, data_2, data_3, file_list)
+    
 
 def plot_2models_result(data_1_sorted, data_2_sorted, num_images_to_select):
     for i in range(0, num_images_to_select):
@@ -535,7 +549,7 @@ def plot_history(history_path):
         history = json.load(json_file)
 
     # Assuming the structure of your history file is like {'accuracy': [...], 'val_accuracy': [...], 'loss': [...], 'val_loss': [...]}
-
+    loss = history['loss']
     sensitivity = history['sensitivity']
     val_sensitivity = history['val_sensitivity']
     specificity = history['specificity']
@@ -544,7 +558,11 @@ def plot_history(history_path):
     val_accuracy = history['val_accuracy']
 
     epochs = range(1, len(accuracy) + 1)                                  
-                           
+    plt.plot(epochs, loss, "b", label="Loss")
+    plt.title("Loss")
+    plt.legend()
+    plt.figure() 
+                       
     plt.plot(epochs, accuracy, "bo", label="Train Accuracy")
     plt.plot(epochs, val_accuracy, "b", label="Validatin Accuracy")
     plt.title("Accuracy")
@@ -561,4 +579,63 @@ def plot_history(history_path):
     plt.plot(epochs, val_specificity , "g", label="Validatin specificity")
     plt.title("specificity")
     plt.legend()
-    plt.figure()  
+    plt.figure()
+
+
+def compare_history(history_path_1, history_path_2):
+    with open(history_path_1, 'r') as json_file:
+        history_1 = json.load(json_file)
+    with open(history_path_2, 'r') as json_file:
+        history_2 = json.load(json_file)
+
+    loss_1 = history_1['loss']
+    val_loss_1 = history_1['val_loss']
+    accuracy_1 = history_1['accuracy']
+    val_accuracy_1 = history_1['val_accuracy']
+    sensitivity_1 = history_1.get('sensitivity', [])
+    val_sensitivity_1 = history_1.get('val_sensitivity', [])
+    specificity_1 = history_1.get('specificity', [])
+    val_specificity_1 = history_1.get('val_specificity', [])
+
+    loss_2 = history_2['loss']
+    val_loss_2 = history_2['val_loss']
+    accuracy_2 = history_2['accuracy']
+    val_accuracy_2 = history_2['val_accuracy']
+    sensitivity_2 = history_2.get('sensitivity', [])
+    val_sensitivity_2 = history_2.get('val_sensitivity', [])
+    specificity_2 = history_2.get('specificity', [])
+    val_specificity_2 = history_2.get('val_specificity', [])
+
+    epochs = range(1, len(accuracy_1) + 1)                                  
+    
+    plt.plot(epochs, loss_1, "b", label="Loss Model 1024")
+    plt.plot(epochs, loss_2, "r", label="Loss Model 256")
+    plt.title("Loss")
+    plt.legend()
+    plt.figure() 
+                       
+    plt.plot(epochs, accuracy_1, "bo", label="Train Accuracy Model 1024")
+    plt.plot(epochs, val_accuracy_1, "b", label="Validation Accuracy Model 1024")
+    plt.plot(epochs, accuracy_2, "ro", label="Train Accuracy Model 256")
+    plt.plot(epochs, val_accuracy_2, "r", label="Validation Accuracy Model 256")
+    plt.title("Accuracy")
+    plt.legend()
+    plt.figure()
+    
+    plt.plot(epochs, sensitivity_1, "go", label="Sensitivity Model 1024")
+    plt.plot(epochs, val_sensitivity_1, "g", label="Validation Sensitivity Model 1024")
+    plt.plot(epochs, sensitivity_2, "ro", label="Sensitivity Model 256")
+    plt.plot(epochs, val_sensitivity_2, "r", label="Validation Sensitivity Model 256")
+    plt.title("Sensitivity")
+    plt.legend()
+    plt.figure()
+    
+    plt.plot(epochs, specificity_1, "go", label="Specificity Model 1024")
+    plt.plot(epochs, val_specificity_1, "g", label="Validation Specificity Model 1024")
+    plt.plot(epochs, specificity_2, "ro", label="Specificity Model 256")
+    plt.plot(epochs, val_specificity_2, "r", label="Validation Specificity Model 256")
+    plt.title("Specificity")
+    plt.legend()
+    plt.figure()
+
+    plt.show()

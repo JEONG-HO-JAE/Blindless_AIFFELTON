@@ -5,9 +5,7 @@ import loss, metrics
 import tensorflow as tf
 import os
 from keras.callbacks import Callback
-from keras.optimizers.schedules import CosineDecay
 from keras.optimizers import *
-from keras.callbacks import ModelCheckpoint
 
 # Define custom objects for loading the model
 custom_objects = {'DiceLoss': loss.DiceLoss(), 
@@ -22,7 +20,7 @@ class SaveModelEveryEpoch(Callback):
         self.first_epoch = first_epoch
 
     def on_epoch_end(self, epoch, logs=None):
-        file_name = "{}--{:.4f}-{:.4f}-{:.4f}-{:.4f}-{:.4f}.pb".format(self.first_epoch + epoch, logs['loss'], logs['sensitivity'],logs['specificity'],
+        file_name = "{}--{:.4f}-{:.4f}-{:.4f}-{:.4f}-{:.4f}-{:.4f}.pb".format(self.first_epoch + epoch, logs['loss'], logs['sensitivity'], logs['specificity'], logs['val_loss'],
                                                                 logs['val_sensitivity'], logs['val_specificity'])
         model_save_path = os.path.join(self.save_path, file_name)
 
@@ -62,7 +60,8 @@ def cosine_decay_with_warmup(epoch, lr):
 def model_train(model, epoch,
                 train_generator, test_generator, 
                 model_path, history_path,
-                save_every_epoch, apply_weight_decay):
+                save_every_epoch, apply_weight_decay,
+                is_load_model=False):
     
     weight_decay = 1e-5
     
@@ -70,7 +69,10 @@ def model_train(model, epoch,
                                                  weight_decay=weight_decay,
                                                  verbose=1)
     
-    save_model_callback = SaveModelEveryEpoch(model_path, 1)
+    if is_load_model:
+        save_model_callback = SaveModelEveryEpoch(model_path, 50 - epoch + 1) 
+    else:
+        save_model_callback = SaveModelEveryEpoch(model_path, 1)
     
     callbacks_list = []
     if save_every_epoch:
@@ -102,4 +104,3 @@ def model_train(model, epoch,
     # Save history to JSON file
     with open(history_path, 'w') as json_file:
         json.dump(history.history, json_file)
-    
