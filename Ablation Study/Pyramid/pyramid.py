@@ -20,7 +20,7 @@ def pyramid_pooling_module(x, pool_sizes):
     for size in pool_sizes:
         pooled = AveragePooling2D(pool_size=(size, size))(x)
         pooled = Conv2D(32, (1, 1), activation='relu', padding='same')(pooled)
-        pooled = Conv2DTranspose(16, (size, size), strides=(size, size), padding='same')(pooled)
+        pooled = Conv2DTranspose(32, (size, size), strides=(size, size), padding='same')(pooled)
         pool_outputs.append(pooled)
         i+=1
     pool_outputs.append(x)
