@@ -13,12 +13,12 @@ Additionally, I experimented with various architectures based on the U-Net model
 
 If you want to check some our results, please check our results in each model directory.
 
-# <div align="center"> Datasets </div> 
+# <div> Datasets </div> 
 각 데이터셋의 표?
 
 <img width="1000" alt="스크린샷 2024-02-19 오전 11 24 20" src="https://github.com/JEONG-HO-JAE/Blindless_AIFFELTON/assets/107621083/9b7c2acc-e26c-48fb-b053-6009e530609b">
 
-# <div align="center"> Results </div>
+# <div> Results </div>
 
 설명 
 <img width="1200" alt="스크린샷 2024-02-19 오전 11 37 49" src="https://github.com/JEONG-HO-JAE/Blindless_AIFFELTON/assets/107621083/4170f07c-d9ea-47d5-8498-f5120f9f0bda">
