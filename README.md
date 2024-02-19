@@ -1,6 +1,6 @@
 # Blindless_AIFFELTON
 
-# <div align="center"> Vessel segmentation🩸🩸 </div> 
+# <div> Vessel segmentation🩸🩸 </div> 
 
 In the field of retinal medical-care, accurately distinguishing a patient's blood vessels is crucial.  
 
