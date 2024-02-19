@@ -28,7 +28,8 @@ If you want to check some our results, please check our results in each model di
 # <div align="center"> How we train our models </div> 
 
 **Full-sized generator**
-설명 
+설명  
+
 <img width="801" alt="스크린샷 2024-02-19 오전 11 40 39" src="https://github.com/JEONG-HO-JAE/Blindless_AIFFELTON/assets/107621083/1b38bc18-99a6-4a59-8617-c69e3cd37f49">
 
 **Sliced generator**
