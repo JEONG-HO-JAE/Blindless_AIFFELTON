@@ -171,7 +171,7 @@
 
 <br/>
 
-### **_Compare with Dense Unet_**
+### **_Compare with Unet_**
 ### Quantitative Evaluation
 - 앞선 기대와는 다르게 평가지표에서 Inception + Pyramid Unet의 sensitivity에서 성능이 좋지 않고 ​다른 지표들 또한 높은 폭으로 상승하지 않음
 
