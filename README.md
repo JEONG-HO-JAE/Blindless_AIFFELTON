@@ -208,7 +208,7 @@
   <img src="https://github.com/sujin7822/README/assets/122075306/196fdb50-c788-4de3-81a9-ed6a6458bfee" width="300" height="200" />
 </p>
 
-### **_Compare with Dense Unet_**
+### **_Compare with Unet_**
 ### Quantitative Evaluation
 
 - 정량평가로는 SD Unet이 Unet보다 좋은지 판단하기 어려움이 있음
@@ -301,7 +301,7 @@
   <img src="https://github.com/sujin7822/README/assets/122075306/161e0d0a-5551-45f9-b15f-c35434da9bbf" alt="Image2" width="600" height="200" />
 </p>
 
-### **_Compare with Dense Unet_**
+### **_Compare with Unet_**
 ### Quantitative Evaluation
 
 - Sensitivity 평가지표 값 대폭 상승​
@@ -350,6 +350,6 @@
 
 |이름|내용|
 |-------|--------| 
-|정호재|안녕하세요| 
+|정호재[ 명품을 만드는 거은 정말 어려운 일이라는 것을 알게 되었다. 모든 실험은 아니었지만 거의 모든 작업에서 내가 예상대로 결과가 나오지 않았다. 꼼꼼하고 완벽히 통제하여 최적의 결과를 얻으려고 노력했고 덕분에 좋은 실험 결론을 얻을 수 있었다. | 
 |김 산|회고 내용을| 
 |김수진|적어주세요| 
