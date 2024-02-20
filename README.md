@@ -30,9 +30,9 @@
 
 |이름|구성|역할|
 |-----| -----|---------| 
-|정호재 |팀장 |Task & Time management,​ Data generator 및 실험 설계​, Segmentation task정성평가 및 정량 평가를 위한 tool 설계| 
-|김산 |팀원 |데이터 구성 및 전처리​, Ablation Study | 
-|김수진 |팀원 |Model 구현​, Ablation Study | 
+|정호재|팀장 |Task & Time management,​ Data generator 및 실험 설계​, Segmentation task정성평가 및 정량 평가를 위한 tool 설계| 
+|김산|팀원 |데이터 구성 및 전처리​, Ablation Study | 
+|김수진|팀원 |Model 구현​, Ablation Study | 
 
 <br/>
 
