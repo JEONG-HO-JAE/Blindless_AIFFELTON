@@ -262,7 +262,7 @@
   <img src="https://github.com/sujin7822/README/assets/122075306/a0e69432-d250-4ed0-9399-667f287be142" alt="Image2" width="600" height="200" />
 </p>
 
-### **_Compare with Dense Unet_**
+### **_Compare with Unet_**
 ### Quantitative Evaluation
 - Test Dataset의 모든 평가지표가 아주 미세하게 상승​
 - 논문에서 사용한 test dataset (DRIVE, CHASE_DB1)의 평가지표가 상승
