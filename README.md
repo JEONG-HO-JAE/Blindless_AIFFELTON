@@ -51,7 +51,7 @@
     - RGB3채널의 안저 이미지
     - Label: 혈관 mask에 대한 1채널 grayscale 이미지
 
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/1d15dab1-ed77-448f-bd75-a02fdf874048"></p> 
+<p align="center"><img src="assets/1.png"></p> 
 
 - train/val/test 데이터 셋
   각 데이터 셋 마다 healthy / unhealthy 비율이 다르고, 해상도도 모두 상이함.  
@@ -71,7 +71,7 @@
 - Fundus image의 3채널(RGB)에는 Noise 정보가 많이 표현됨. -> Noise 정보가 가장 표현되지 않는 Green Channel을 추출
 - 추출된 Green Channel에 CLAHE(Contrast Limited Adaptive Histogram Equalization​) 기법을 적용
 
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/e0e899aa-63eb-4d60-ac3e-90fe06d40e21"></p> 
+<p align="center"><img src="assets/2.png"></p> 
   
 - outlier(붉은색을 띄는 Fundus이미지)에 대한 강건한 전처리 기법 추가
   1. 3채널 이미지에서 r 채널 픽셀분포를 확인.​
@@ -82,7 +82,7 @@
   4. 3단계의 결과는 혈관이 조금 밝게 보임. 이를 보다 뚜렷하게 하기 위해 원래의 g 채널에 CLAHE를 적용한 이미지의 픽셀 값과 합침.​
   5. 동일한 가중치로 픽셀을 합치지 않고, red channel + clahe에 더 가중치를 주고 이미지를 합성.
 
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/8c5290bc-5095-48ce-b211-d88c51dbd230"></p> 
+<p align="center"><img src="assets/3.png"></p> 
 
 <br/>
 
@@ -91,7 +91,7 @@
 
 
 ### 3.1 Experimentation Process 
-<img width="641" src="https://github.com/3n952/aiffel-sia/assets/107621083/2e693739-4c42-4fa5-9238-8631f019775e">  
+<img width="641" src="assets/4.png">  
 
 1. **'Unet - FG/SG/AG'** => Generator Ablation study 
 2. **the others** => Model Ablatation study
@@ -104,18 +104,18 @@
 
 - **Baseline Model**: Dense Unet
   
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/e58ff1d5-9cff-437c-af55-e1c589d0cc06"></p>
+<p align="center"><img src="assets/5.png"></p>
 
 <br/>
 
 1. Full sized Generator(FG): 정해진 크기로 resize
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/61479217-fb5f-4666-a7fd-a3e7dc27ab34"></p>
+<p align="center"><img src="assets/6.png"></p>
 <br/>
 3. Slice sized Generator(SG): 전체 이미지를 1024, 1024로 resize 시킨 후 512, 512사이즈로 이미지를 잘라 patches들을 구성
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/f8a24230-25c9-4c6a-af19-a7e8a0c43769"></p>
+<p align="center"><img src="assets/7.png"></p>
 <br/>
 5. Adaptive sized Generator(AG): 각 이미지를 512, 512 사이즈로 이미지를 잘라 patches를 구성한 후, 학습 시에 batch size에 맞게 이미지 patch를 random하게 구성
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/72c82383-949a-4752-ba39-4d46d47c314a"></p>
+<p align="center"><img src="assets/8.png"></p>
 <br/>
 
 ### Quantitative Evaluation
@@ -124,7 +124,7 @@
 - Test Dataset에 대한 정량 평가 결과는 FG와 SG사이에 큰 차이가 없음.​   
 - 반면 AG는 전반적으로 좋지 않은 점수를 기록.
 
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/da546980-9bd0-4dd9-9ad9-a0b389daeae0"width="600" height="400"></p>
+<p align="center"><img src="assets/9.png"width="600" height="400"></p>
 
 
 ### Qualitative Evaluation
@@ -135,7 +135,7 @@
 - FG와 SG는 정성적 평가에서도 큰 차이가 없음
 - 두 Generator 모두 비교적 굵은 혈관과 미세 혈관을 잘 구현함
 
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/2c3ce3c2-8292-4ccc-b3bf-0a56acad18cb"width="600" height="400"></p>
+<p align="center"><img src="assets/10.png"width="600" height="400"></p>
 
 
 <br/>
@@ -146,7 +146,7 @@
 - 혈관을 굵게 표현한 다는 점이 sensitivity를 높이면서 동시에 specificity를 낮추는 요소로 작용했다고 판단
 ​- IOU 지표 또한 많이 차이나는 것으로 미뤄보아 AG의 전반적인 성능이 많이 떨어짐
 
-<p align="center"><img src="https://github.com/3n952/aiffel-sia/assets/107621083/3f490744-b73d-432d-9189-f637da0cf152"width="600" height="400"></p>
+<p align="center"><img src="assets/11.png"width="600" height="400"></p>
 
 
 
